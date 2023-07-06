@@ -2,8 +2,17 @@
 - name: Include Pre-setup task
   include: pre_setup.yml
 
-- name: Include task to disable swap
-  include: disable_swap.yml
+#- name: Include task to disable swap
+#  include: disable_swap.yml
 
-- name: Include task to configure timezone and ntp
-  include: configure_timezone_ntp.yml
+#- name: Include task to configure timezone and ntp
+#  include: configure_timezone_ntp.yml
+
+- name: Include task to load required kernel modules and sysctl configs
+  include: load_kernel_modules_sysctl.yml
+
+- name: Include task to configure containerd container runtime
+  include: setup_containerd.yml
+
+- name: Include task to install k8s packages
+  include: install_k8s_packages.yml
