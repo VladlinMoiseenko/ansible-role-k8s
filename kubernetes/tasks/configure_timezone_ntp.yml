@@ -13,4 +13,4 @@
     state: started
     enabled: yes
 - name: Synchronize time manually
-  ansible.builtin.shell:  chronyc sources
+  shell:  'chronyc sources'
