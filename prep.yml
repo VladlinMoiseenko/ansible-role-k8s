@@ -1,0 +1,10 @@
+---
+- name: Install kubernetes
+  hosts: k8snodes
+  remote_user: vlad
+  become: yes
+  become_method: sudo
+  vars:              
+    timezone: "Europe/Moscow"
+  roles:
+    - kubernetes
