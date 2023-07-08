@@ -1,33 +1,37 @@
 ---
-- name: Add docker repository
-  get_url:
-    url: https://download.docker.com/linux/centos/docker-ce.repo
-    dest: /etc/yum.repos.d/docer-ce.repo
+- name: Add Docker official GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+    
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+    filename: docker
+    update_cache: yes
 
-- name: Install containerd
-  ansible.builtin.package:
-    name: [containerd.io]
+- name: "Update cache & Full system update"
+  apt:
+    update_cache: true
+    upgrade: dist
+    cache_valid_time: 3600
+    force_apt_get: true
+
+- name: Install containerd.
+  apt: 
+    name:
+      - containerd.io
     state: present
 
-- name: Create containerd directories required
-  ansible.builtin.file:
-    path: "{{ item }}"
+- name: Configure containerd.
+  file:
+    path: /etc/containerd
     state: directory
-  with_items:
-    - /etc/containerd
 
-- name: Configure containerd
-  ansible.builtin.shell: containerd config default > /etc/containerd/config.toml
-  run_once: true
-
-- name: Set cgroup driver as systemd
-  ansible.builtin.template:
-    src: daemon.json.j2
-    dest: /etc/docker/daemon.json
-
-- name: Start and enable containerd service
-  ansible.builtin.systemd:
+- name: Enable containerd service, and start it.
+  systemd: 
     name: containerd
     state: restarted
     enabled: yes
-    daemon_reload: yes
+    daemon-reload: yes

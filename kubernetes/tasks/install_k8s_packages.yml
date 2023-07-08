@@ -1,15 +1,42 @@
 ---
-- name: Add kubernetes repository
-  ansible.builtin.template:
-    src: 'kubernetes.repo.j2'
-    dest: /etc/yum.repos.d/kubernetes.repo
+- name: Add Google official GPG key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
 
-- name: Install kubernetes packages
-  yum:
-    name: [kubelet,kubeadm,kubectl]
-    disable_excludes: kubernetes
+- name: Add Kubernetes Repository
+  apt_repository:
+    repo: deb http://apt.kubernetes.io/ kubernetes-xenial main 
+    state: present
+    filename: kubernetes
+    mode: 0600
 
-- name: Enable kubelet service
-  ansible.builtin.service:
+- name: "Update cache & Full system update"
+  apt:
+    update_cache: true
+	  upgrade: dist
+	  cache_valid_time: 3600
+	  force_apt_get: true
+
+- name: Installing Kubernetes Cluster Packages.
+  apt: 
+    name:
+	    - kubeadm
+	    - kubectl
+	    - kubelet
+    state: present
+
+- name: Enable service kubelet, and enable persistently
+  service: 
     name: kubelet
     enabled: yes
+
+- name: Reboot all the kubernetes nodes.
+  reboot:
+    msg: "Reboot initiated by Ansible"
+    connect_timeout: 5
+    reboot_timeout: 3600
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: whoami
+
