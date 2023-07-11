@@ -1,0 +1,69 @@
+---
+- name: Enable kubelet service
+  systemd:
+    name: kubelet
+    enabled: yes
+    daemon-reload: yes
+
+- name: Pulling images required for setting up a Kubernetes cluster
+  shell: kubeadm config images pull
+
+- name: Kubeadm config images pull containerd
+  shell: 'kubeadm config images pull --cri-socket unix:///run/containerd/containerd.sock'
+
+- name: Resetting kubeadm
+  shell: kubeadm reset -f
+  register: output
+
+- name: Initializing Kubernetes cluster
+  shell: kubeadm init --pod-network-cidr=172.24.0.0/16 --cri-socket unix:///run/containerd/containerd.sock
+  register: myshell_output
+
+- debug: msg="{{ myshell_output.stdout }}"
+
+- name: Create .kube to home directory of master server
+  file:
+      path: $HOME/.kube
+      state: directory
+      mode: 0755
+
+- name: Copy admin.conf to user's kube config to master server
+  copy:
+      src: /etc/kubernetes/admin.conf
+      dest: $HOME/.kube/config
+      remote_src: yes
+
+- name: Set chmod
+  file:
+    path: /etc/kubernetes/admin.conf
+    mode: 0666
+
+- name: Copy admin.conf to user's kube config to ansible local server
+  become: yes
+  become_method: sudo
+  become_user: vlad
+  fetch:
+      src: /etc/kubernetes/admin.conf
+      dest: /home/vlad/.kube/config
+      flat: yes
+
+# Получите токен для присоединения узлов к мастеру Kubernetes.
+- name: Get the token for joining the nodes with Kuberentes master.
+  shell: kubeadm token create  --print-join-command
+  register: kubernetes_join_command
+
+- debug:
+    msg: "{{ kubernetes_join_command.stdout_lines }}"
+
+# Скопируйте команду K8s Join в файл в мастере
+- name: Copy K8s Join command to file in master
+  copy:
+    content: "{{ kubernetes_join_command.stdout_lines[0] }}"
+    dest: "/tmp/kubernetes_join_command"
+
+# Скопируйте команду соединения с мастера на локальный доступный сервер
+- name: Copy join command from master to local ansible server
+  fetch:
+    src: "/tmp/kubernetes_join_command"
+    dest: "/tmp/kubernetes_join_command"
+    flat: yes

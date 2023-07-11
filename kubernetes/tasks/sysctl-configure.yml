@@ -1,0 +1,17 @@
+---
+- name: Enable kernel modules
+  shell: |
+    modprobe overlay
+    modprobe br_netfilter
+
+- name: Configure sysctl params for Kubernetes.
+  shell:
+    cmd: |
+      tee /etc/sysctl.d/kubernetes.conf<<EOF
+      net.bridge.bridge-nf-call-ip6tables = 1
+      net.bridge.bridge-nf-call-iptables = 1
+      net.ipv4.ip_forward = 1
+      EOF
+
+- name: Apply sysctl
+  command: sysctl --system
