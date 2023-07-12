@@ -23,14 +23,14 @@
 
 - name: Create .kube to home directory of master server
   file:
-      path: $HOME/.kube
+      path: /home/vlad/.kube
       state: directory
       mode: 0755
 
 - name: Copy admin.conf to user's kube config to master server
   copy:
       src: /etc/kubernetes/admin.conf
-      dest: $HOME/.kube/config
+      dest: /home/vlad/.kube/config
       remote_src: yes
 
 - name: Set chmod

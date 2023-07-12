@@ -1,7 +1,7 @@
 ---
-- name: Kubectl create tigera-operator
-  shell: 'kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/tigera-operator.yaml'
-- name: Kubectl create custom-resources
-  shell: 'kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/custom-resources.yaml'
-- name: Kubectl apply calico
-  shell: 'kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml'
+- name: Install calico Pod network
+  become: yes
+  become_user: vlad
+  shell:  kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
+  args:
+    chdir: $HOME
