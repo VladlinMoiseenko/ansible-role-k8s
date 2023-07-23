@@ -1,4 +1,3 @@
 [k8snodes]
-# k8s158
-k8smaster02
-k8snode03
+control-01
+worker-01

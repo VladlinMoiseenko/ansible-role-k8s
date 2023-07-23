@@ -1,20 +1,35 @@
 ---
-- name: Remove packages
+- name: Set hostname
+  include_tasks: set-hostname.yml
+
+- name: Set hosts
+  include_tasks: set-hosts.yml
+
+- name: Remove packages, apt update, reboot
   include_tasks: remove-packages.yml
+
 - name: Swap inactive
   include_tasks: swap-inactive.yml
+
 - name: Installing Kubernetes Packages
   include_tasks: kubernetes-packages.yml
+
 - name: Sysctl configure 
   include_tasks: sysctl-configure.yml
+
 - name: Containerd install 
-  include_tasks: containerd-installing.yml
-- name: Kubernetes init on Master
+  include_tasks: containerd-install.yml
+
+- name: Kubernetes init on Control
   include_tasks: kubernetes-init.yml
-  when: "'master' in ansible_hostname"
-- name: Calico install on Master
+  when: "'control' in ansible_hostname"
+
+- name: Calico install on Control
   include_tasks: calico-install.yml
-  when: "'master' in ansible_hostname"
+  when: "'control' in ansible_hostname"
+
 - name: Worker init
   include_tasks: worker-init.yml
-  when: "'node' in ansible_hostname"
+  when: "'worker' in ansible_hostname"
+
+

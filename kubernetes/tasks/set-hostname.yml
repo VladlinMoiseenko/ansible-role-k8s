@@ -1,0 +1,4 @@
+---
+- name: Set FQDN
+  hostname:
+    name: "{{ hostvars[inventory_hostname]['inventory_hostname'] }}.ubuntu.local"

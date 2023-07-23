@@ -2,7 +2,7 @@
 - name: Make the Swap inactive
   command: swapoff -a
 
-- name: Remove Swap entry from /etc/fstab.
+- name: Remove Swap entry from /etc/fstab
   lineinfile:
     dest: /etc/fstab
     regexp: swap
