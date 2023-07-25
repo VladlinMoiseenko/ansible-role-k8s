@@ -23,14 +23,14 @@
 
 - name: Create .kube to home directory of master server
   file:
-      path: /home/vlad/.kube
+      path: /home/jammy/.kube
       state: directory
       mode: 0755
 
 - name: Copy admin.conf to user's kube config to master server
   copy:
       src: /etc/kubernetes/admin.conf
-      dest: /home/vlad/.kube/config
+      dest: /home/jammy/.kube/config
       remote_src: yes
 
 - name: Set chmod
@@ -41,10 +41,10 @@
 - name: Copy admin.conf to user's kube config to ansible local server
   become: yes
   become_method: sudo
-  become_user: vlad
+  become_user: jammy
   fetch:
       src: /etc/kubernetes/admin.conf
-      dest: /home/vlad/.kube/config
+      dest: /home/jammy/.kube/config
       flat: yes
 
 # Получите токен для присоединения узлов к мастеру Kubernetes.

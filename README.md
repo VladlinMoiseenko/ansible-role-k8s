@@ -1,6 +1,6 @@
 # Ansible Role 
  
-for install Kubernetes
+for install Kubernetes на двух хостах: мастер и воркер
 
 ## Supported OS
 

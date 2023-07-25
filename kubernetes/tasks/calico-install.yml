@@ -1,7 +1,7 @@
 ---
 - name: Install calico Pod network
   become: yes
-  become_user: vlad
+  become_user: jammy
   shell:  kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
   args:
     chdir: $HOME
