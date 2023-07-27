@@ -1,7 +1,7 @@
 ---
 - name: Install kubernetes
   hosts: k8snodes
-  remote_user: jammy
+  remote_user: user
   become: yes
   become_method: sudo
   roles:
